@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -159,6 +160,65 @@ public class AlumnoGUI extends JFrame {
                 }
             }
         });
+        createButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, null, false);
+                studentDialog.setVisible(true);
+                StudentDTO studentDTO = studentDialog.getStudentDTO();
+                System.out.println(studentDTO.getName());
+                try {
+                    //si hay excpetion el dialogo que se mantenga abierto
+                    Student student = dtoToStudent(studentDTO);
+                    dao.create(student);
+                } catch (DaoException | PersonNameException | PersonDniException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedStudent = studentsTable.getSelectedRow();
+                if (selectedStudent < 0) {
+                    //JOPTION PANE
+                    System.out.println("No se selecciono nada");
+                    return;
+                }
+
+                StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
+                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO, false);
+                studentDialog.setVisible(true);
+                studentDTO = studentDialog.getStudentDTO();
+                System.out.println(studentDTO);
+                try {
+                    //si hay excpetion el dialogo que se mantenga abierto
+                    Student student = dtoToStudent(studentDTO);
+                    dao.update(student);
+                } catch (DaoException | PersonNameException | PersonDniException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+    }
+
+    private StudentDTO aluToDTO(Student student) {
+        StudentDTO studentDTO = new StudentDTO();
+        studentDTO.setName(student.getName());
+        studentDTO.setSurname(student.getSurname());
+        studentDTO.setDni(student.getDni());
+        studentDTO.setBirthday(student.getBirthday());
+        return studentDTO;
+    }
+
+    private Student dtoToStudent(StudentDTO studentDTO) throws PersonNameException, PersonDniException {
+        Student student = new Student();
+        student.setDni(studentDTO.getDni());
+        student.setName(studentDTO.getName());
+        student.setSurname(studentDTO.getSurname());
+        student.setBirthday(studentDTO.getBirthday());
+        student.setAdmissionDate(studentDTO.getAdmissionDate());
+        return student;
     }
 
     public void readFile() {
