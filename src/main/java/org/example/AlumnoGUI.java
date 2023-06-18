@@ -87,7 +87,9 @@ public class AlumnoGUI extends JFrame {
                 }
                 try {
                     if (dao != null)
-                        dao.findAll(onlyActive).forEach(System.out::println);
+                        students = dao.findAll(onlyActive);
+                        studentModel.setStudents(students);
+                        studentModel.fireTableDataChanged();
                 } catch (DaoException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -110,7 +112,6 @@ public class AlumnoGUI extends JFrame {
                         connectButton.setEnabled(false);
                         disconnectButton.setEnabled(true);
                         students = dao.findAll(onlyActive);
-                        dao.findAll(onlyActive).forEach(System.out::println);
                         studentModel.setStudents(students);
                         studentModel.fireTableDataChanged();
                         deleteButton.setEnabled(true);
