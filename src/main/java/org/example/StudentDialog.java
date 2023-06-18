@@ -15,6 +15,9 @@ public class StudentDialog extends JDialog {
     private JTextField surnameTextField;
     private JDateChooser birthday;
     private JDateChooser admissionDate;
+    private JTextField approvedSubjectsTextField;
+    private JTextField averageTextField;
+    private JTextField genderTextField;
 
     public StudentDTO getStudentDTO() {
         return studentDTOs;
@@ -29,7 +32,7 @@ public class StudentDialog extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
         setLocationRelativeTo(null);
 
-        setSize(260, 200);
+        setSize(360, 280);
 
         if (studentDTO == null) {
             this.studentDTOs = new StudentDTO();
@@ -77,6 +80,9 @@ public class StudentDialog extends JDialog {
                 studentDTOs.setSurname(surnameTextField.getText());
                 studentDTOs.setBirthday(new MyCalendar(birthday.getCalendar()));
                 studentDTOs.setAdmissionDate(new MyCalendar(admissionDate.getCalendar()));
+                studentDTOs.setApprovedSubjectQuantity(Integer.valueOf(approvedSubjectsTextField.getText()));
+                studentDTOs.setAverage(Double.valueOf(averageTextField.getText()));
+                studentDTOs.setGender(genderTextField.getText().charAt(0));
                 setVisible(false);
             }
         });

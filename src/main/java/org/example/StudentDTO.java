@@ -8,6 +8,33 @@ public class StudentDTO {
     private String surname;
     private MyCalendar birthday;
     private MyCalendar admissionDate;
+    private char gender;
+    private int approvedSubjectQuantity;
+    private double average;
+
+    public char getGender() {
+        return gender;
+    }
+
+    public void setGender(char gender) {
+        this.gender = gender;
+    }
+
+    public int getApprovedSubjectQuantity() {
+        return approvedSubjectQuantity;
+    }
+
+    public void setApprovedSubjectQuantity(int approvedSubjectQuantity) {
+        this.approvedSubjectQuantity = approvedSubjectQuantity;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public void setAverage(double average) {
+        this.average = average;
+    }
 
     public MyCalendar getAdmissionDate() {
         return admissionDate;

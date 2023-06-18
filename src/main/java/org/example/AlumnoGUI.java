@@ -171,7 +171,7 @@ public class AlumnoGUI extends JFrame {
                     //si hay excpetion el dialogo que se mantenga abierto
                     Student student = dtoToStudent(studentDTO);
                     dao.create(student);
-                } catch (DaoException | PersonNameException | PersonDniException ex) {
+                } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -195,7 +195,7 @@ public class AlumnoGUI extends JFrame {
                     //si hay excpetion el dialogo que se mantenga abierto
                     Student student = dtoToStudent(studentDTO);
                     dao.update(student);
-                } catch (DaoException | PersonNameException | PersonDniException ex) {
+                } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -211,13 +211,16 @@ public class AlumnoGUI extends JFrame {
         return studentDTO;
     }
 
-    private Student dtoToStudent(StudentDTO studentDTO) throws PersonNameException, PersonDniException {
+    private Student dtoToStudent(StudentDTO studentDTO) throws PersonNameException, PersonDniException, StudentException {
         Student student = new Student();
         student.setDni(studentDTO.getDni());
         student.setName(studentDTO.getName());
         student.setSurname(studentDTO.getSurname());
         student.setBirthday(studentDTO.getBirthday());
         student.setAdmissionDate(studentDTO.getAdmissionDate());
+        student.setGender(studentDTO.getGender());
+        student.setApprovedSubjectQuantity(studentDTO.getApprovedSubjectQuantity());
+        student.setAverage(studentDTO.getAverage());
         return student;
     }
 
