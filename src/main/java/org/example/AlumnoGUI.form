@@ -8,44 +8,50 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="d85d8" class="javax.swing.JButton" binding="button2" default-binding="true">
+      <component id="d85d8" class="javax.swing.JButton" binding="deleteButton">
         <constraints>
           <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Button"/>
+          <label value="Delete"/>
+          <text value="Delete"/>
         </properties>
       </component>
-      <component id="240b8" class="javax.swing.JTable" binding="table1" default-binding="true">
+      <component id="240b8" class="javax.swing.JTable" binding="studentsTable">
         <constraints>
           <grid row="3" column="0" row-span="4" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <updateSelectionOnSort value="false"/>
+        </properties>
       </component>
-      <component id="fde11" class="javax.swing.JButton" binding="button1" default-binding="true">
+      <component id="fde11" class="javax.swing.JButton" binding="createButton">
         <constraints>
           <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Button"/>
+          <label value="Create"/>
+          <text value="Create"/>
         </properties>
       </component>
-      <component id="40353" class="javax.swing.JButton" binding="button3" default-binding="true">
+      <component id="40353" class="javax.swing.JButton" binding="updateButton">
         <constraints>
           <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Button"/>
+          <label value="Update"/>
+          <text value="Update"/>
         </properties>
       </component>
-      <component id="8d2b5" class="javax.swing.JButton" binding="button4" default-binding="true">
+      <component id="8d2b5" class="javax.swing.JButton" binding="getButton">
         <constraints>
           <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Button"/>
+          <label value="Get"/>
+          <text value="Get"/>
         </properties>
       </component>
       <component id="7d0ba" class="javax.swing.JLabel">
@@ -176,10 +182,18 @@
               </component>
               <component id="e6335" class="javax.swing.JButton" binding="connectButton" default-binding="true">
                 <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Connect"/>
+                </properties>
+              </component>
+              <component id="888f6" class="javax.swing.JButton" binding="disconnectButton" default-binding="true">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Disconnect"/>
                 </properties>
               </component>
             </children>

@@ -1,24 +1,26 @@
 package org.example;
 
-import person.Student;
+import person.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class AlumnoGUI extends JFrame {
+    private StudentModel studentModel;
     private Dao<Student, Integer> dao;
     private StudentDaoTxt daoTxt;
     private StudentDaoSql daoSql;
-    private JButton button1;
-    private JButton button2;
-    private JTable table1;
-    private JButton button3;
-    private JButton button4;
+    private JButton createButton;
+    private JButton deleteButton;
+    private JTable studentsTable;
+    private JButton updateButton;
+    private JButton getButton;
     private JPanel mainPanel;
     private JComboBox daoKindComboBox;
     private JTextField fileSelectedTextField;
@@ -31,7 +33,9 @@ public class AlumnoGUI extends JFrame {
     private JTextField textField4;
     private JButton connectButton;
     private JPanel sqlPanel;
+    private JButton disconnectButton;
     private Boolean onlyActive = false;
+    private List<Student> students = new ArrayList<>();
 
     //Solo abra txt
     public AlumnoGUI() {
@@ -43,6 +47,12 @@ public class AlumnoGUI extends JFrame {
         setLocationRelativeTo(null);
         textPanel.setVisible(true);
         sqlPanel.setVisible(false);
+        deleteButton.setEnabled(false);
+        disconnectButton.setEnabled(false);
+        studentModel = new StudentModel();
+        studentsTable.setModel(studentModel);
+        studentModel.setStudents(students);
+
         fileBrowserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -61,26 +71,24 @@ public class AlumnoGUI extends JFrame {
                 if (daoKindComboBox.getSelectedIndex() == 0) {
                     textPanel.setVisible(true);
                     sqlPanel.setVisible(false);
-                    if (daoTxt == null) {
-                        readFile();
+                    if (daoTxt != null) {
+                        System.out.println("Mirko");
+                        dao = daoTxt;
                     }
-                    dao = daoTxt;
-                    try {
-                        dao.findAll(onlyActive).forEach(System.out::println);
-                    } catch (DaoException ex) {
-                        throw new RuntimeException(ex);
-                    }
+
                 } else {
                     textPanel.setVisible(false);
                     sqlPanel.setVisible(true);
                     if (daoSql != null) {
+                        System.out.println("take the aready instanced sql");
                         dao = daoSql;
-                        try {
-                            dao.findAll(onlyActive).forEach(System.out::println);
-                        } catch (DaoException ex) {
-                            throw new RuntimeException(ex);
-                        }
                     }
+                }
+                try {
+                    if (dao != null)
+                        dao.findAll(onlyActive).forEach(System.out::println);
+                } catch (DaoException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
@@ -89,6 +97,7 @@ public class AlumnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (daoSql == null) {
                     try {
+                        System.out.println("First time connection");
                         Map<String, String> config = new HashMap<>();
                         config.put(DaoFactory.TYPE_DAO, DaoFactory.DAO_SQL);
                         config.put(DaoFactory.SQL_URL, "jdbc:mysql://127.0.0.1:3306/universidad_caba");
@@ -97,10 +106,56 @@ public class AlumnoGUI extends JFrame {
 
                         daoSql = (StudentDaoSql) DaoFactory.getInstance().crearDao(config);
                         dao = daoSql;
-                        dao.findAll(onlyActive).forEach(System.out::println);
+                        connectButton.setEnabled(false);
+                        disconnectButton.setEnabled(true);
+                        students = dao.findAll(onlyActive);
+                        studentModel.setStudents(students);
+                        studentModel.fireTableDataChanged();
+                        deleteButton.setEnabled(true);
                     } catch (DaoFactoryException | DaoException ex) {
                         JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                } else {
+                    System.out.println("idk");
+                }
+            }
+        });
+        disconnectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (daoSql != null) {
+                    try {
+                        System.out.println("disconnect");
+                        daoSql.close();
+                        daoSql = null;
+                        connectButton.setEnabled(true);
+                        disconnectButton.setEnabled(false);
+                    } catch (DaoException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        });
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedStudent = studentsTable.getSelectedRow();
+                if (selectedStudent < 0) {
+                    //JOPTION PANE
+                    System.out.println("No se selecciono nada");
+                    return;
+                }
+                int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this, "Are you sure to delete?",
+                        "Delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (resp != JOptionPane.OK_OPTION) {
+                    return;
+                }
+                try {
+                    Student student = students.get(selectedStudent);
+                    dao.delete(student.getDni());
+                    System.out.println(student.getDni());
+                } catch (DaoException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
@@ -121,11 +176,14 @@ public class AlumnoGUI extends JFrame {
             config.put(DaoFactory.DAO_PATH_TXT, fileSelectedTextField.getText());
             daoTxt = (StudentDaoTxt) DaoFactory.getInstance().crearDao(config);
             dao = daoTxt;
-            dao.findAll(onlyActive).forEach(System.out::println);
+            students = dao.findAll(onlyActive);
+            studentModel.setStudents(students);
+            studentModel.fireTableDataChanged();
         } catch (DaoFactoryException | DaoException ex) {
             JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     public static void main(String[] args) {
         new AlumnoGUI();
     }
