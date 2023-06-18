@@ -202,6 +202,21 @@ public class AlumnoGUI extends JFrame {
                 }
             }
         });
+        getButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedStudent = studentsTable.getSelectedRow();
+                if (selectedStudent < 0) {
+                    //JOPTION PANE
+                    System.out.println("No se selecciono nada");
+                    return;
+                }
+
+                StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
+                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO, true);
+                studentDialog.setVisible(true);
+            }
+        });
     }
 
     private StudentDTO aluToDTO(Student student) {
