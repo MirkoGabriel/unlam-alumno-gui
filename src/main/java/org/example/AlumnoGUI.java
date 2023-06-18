@@ -42,7 +42,7 @@ public class AlumnoGUI extends JFrame {
     public AlumnoGUI() {
         setContentPane(mainPanel);
         setTitle("Alumno GUI");
-        setSize(520, 320);
+        setSize(1040, 320);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
         setLocationRelativeTo(null);
@@ -110,6 +110,7 @@ public class AlumnoGUI extends JFrame {
                         connectButton.setEnabled(false);
                         disconnectButton.setEnabled(true);
                         students = dao.findAll(onlyActive);
+                        dao.findAll(onlyActive).forEach(System.out::println);
                         studentModel.setStudents(students);
                         studentModel.fireTableDataChanged();
                         deleteButton.setEnabled(true);
@@ -132,7 +133,7 @@ public class AlumnoGUI extends JFrame {
                         connectButton.setEnabled(true);
                         disconnectButton.setEnabled(false);
                     } catch (DaoException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -156,7 +157,7 @@ public class AlumnoGUI extends JFrame {
                     dao.delete(student.getDni());
                     System.out.println(student.getDni());
                 } catch (DaoException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -172,7 +173,7 @@ public class AlumnoGUI extends JFrame {
                     Student student = dtoToStudent(studentDTO);
                     dao.create(student);
                 } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -196,7 +197,7 @@ public class AlumnoGUI extends JFrame {
                     Student student = dtoToStudent(studentDTO);
                     dao.update(student);
                 } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -208,6 +209,10 @@ public class AlumnoGUI extends JFrame {
         studentDTO.setSurname(student.getSurname());
         studentDTO.setDni(student.getDni());
         studentDTO.setBirthday(student.getBirthday());
+        studentDTO.setAdmissionDate(student.getAdmissionDate());
+        studentDTO.setGender(student.getGender());
+        studentDTO.setApprovedSubjectQuantity(student.getApprovedSubjectQuantity());
+        studentDTO.setAverage(student.getAverage());
         return studentDTO;
     }
 

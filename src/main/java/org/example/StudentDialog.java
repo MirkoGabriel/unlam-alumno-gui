@@ -43,6 +43,10 @@ public class StudentDialog extends JDialog {
             nameTextField.setText(studentDTO.getName());
             surnameTextField.setText(studentDTO.getSurname());
             birthday.setCalendar(studentDTO.getBirthday());
+            admissionDate.setCalendar(studentDTO.getAdmissionDate());
+            genderTextField.setText(String.valueOf(studentDTO.getGender()));
+            approvedSubjectsTextField.setText(String.valueOf(studentDTO.getApprovedSubjectQuantity()));
+            averageTextField.setText(String.valueOf(studentDTO.getAverage()));
             setTitle(isGetInfo ? "Info Student" : "Update Student");
         }
         buttonOK.addActionListener(new ActionListener() {

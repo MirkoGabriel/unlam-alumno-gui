@@ -12,7 +12,11 @@ public class StudentModel extends AbstractTableModel {
     private static final int NAME = 1;
     private static final int SURNAME = 2;
     private static final int BIRTHDAY = 3;
-    private static final String[] HEADERS = {"Dni", "Name", "Surnam", "Birthday"};
+    private static final int ADMISSION_DATE = 4;
+    private static final int GENDER = 5;
+    private static final int APPROVED_SUBJECTS_QUANTITY = 6;
+    private static final int AVERAGE = 7;
+    private static final String[] HEADERS = {"Dni", "Name", "Surname", "Birthday", "Admission Date", "Gender", "ApprovedSubjectsQuantity", "Average"};
     private List<Student> students;
 
     public List<Student> getStudents() {
@@ -54,6 +58,14 @@ public class StudentModel extends AbstractTableModel {
                 return student.getSurname();
             case BIRTHDAY:
                 return student.getBirthday();
+            case ADMISSION_DATE:
+                return student.getAdmissionDate();
+            case GENDER:
+                return student.getGender();
+            case APPROVED_SUBJECTS_QUANTITY:
+                return student.getApprovedSubjectQuantity();
+            case AVERAGE:
+                return student.getAverage();
             default:
                 return null;
         }
