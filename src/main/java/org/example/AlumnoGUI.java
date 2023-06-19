@@ -3,10 +3,10 @@ package org.example;
 import person.*;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +29,9 @@ public class AlumnoGUI extends JFrame {
     private JCheckBox onlyActiveCheckBox;
     private JPanel informationPanel;
     private JPanel textPanel;
-    private JTextField textField2;
-    private JTextField textField3;
-    private JTextField textField4;
+    private JTextField pathTextField;
+    private JTextField userTextField;
+    private JTextField passTextField;
     private JButton connectButton;
     private JPanel sqlPanel;
     private JButton disconnectButton;
@@ -75,6 +75,9 @@ public class AlumnoGUI extends JFrame {
                     if (daoTxt != null) {
                         System.out.println("Mirko");
                         dao = daoTxt;
+                        studentsTable.setModel(studentModel);
+                    }else {
+                        studentsTable.setModel(new DefaultTableModel());
                     }
 
                 } else {
@@ -83,6 +86,9 @@ public class AlumnoGUI extends JFrame {
                     if (daoSql != null) {
                         System.out.println("take the aready instanced sql");
                         dao = daoSql;
+                        studentsTable.setModel(studentModel);
+                    }else{
+                        studentsTable.setModel(new DefaultTableModel());
                     }
                 }
                 try {
@@ -103,9 +109,9 @@ public class AlumnoGUI extends JFrame {
                         System.out.println("First time connection");
                         Map<String, String> config = new HashMap<>();
                         config.put(DaoFactory.TYPE_DAO, DaoFactory.DAO_SQL);
-                        config.put(DaoFactory.SQL_URL, "jdbc:mysql://127.0.0.1:3306/universidad_caba");
-                        config.put(DaoFactory.SQL_USER, "root");
-                        config.put(DaoFactory.SQL_PASS, "root");
+                        config.put(DaoFactory.SQL_URL, pathTextField.getText());
+                        config.put(DaoFactory.SQL_USER, userTextField.getText());
+                        config.put(DaoFactory.SQL_PASS, passTextField.getText());
 
                         daoSql = (StudentDaoSql) DaoFactory.getInstance().crearDao(config);
                         dao = daoSql;
@@ -114,6 +120,7 @@ public class AlumnoGUI extends JFrame {
                         students = dao.findAll(onlyActive);
                         studentModel.setStudents(students);
                         studentModel.fireTableDataChanged();
+                        studentsTable.setModel(studentModel);
                         deleteButton.setEnabled(true);
                     } catch (DaoFactoryException | DaoException ex) {
                         JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -133,6 +140,10 @@ public class AlumnoGUI extends JFrame {
                         daoSql = null;
                         connectButton.setEnabled(true);
                         disconnectButton.setEnabled(false);
+                        studentsTable.setModel(new DefaultTableModel());
+                        passTextField.setText("");
+                        pathTextField.setText("");
+                        userTextField.setText("");
                     } catch (DaoException ex) {
                         JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -263,6 +274,7 @@ public class AlumnoGUI extends JFrame {
             students = dao.findAll(onlyActive);
             studentModel.setStudents(students);
             studentModel.fireTableDataChanged();
+            studentsTable.setModel(studentModel);
         } catch (DaoFactoryException | DaoException ex) {
             JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
