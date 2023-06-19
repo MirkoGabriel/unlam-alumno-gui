@@ -18,6 +18,7 @@ public class StudentDialog extends JDialog {
     private JTextField approvedSubjectsTextField;
     private JTextField averageTextField;
     private JTextField genderTextField;
+    private JPanel butttonPane;
 
     public StudentDTO getStudentDTO() {
         return studentDTOs;
@@ -48,6 +49,9 @@ public class StudentDialog extends JDialog {
             approvedSubjectsTextField.setText(String.valueOf(studentDTO.getApprovedSubjectQuantity()));
             averageTextField.setText(String.valueOf(studentDTO.getAverage()));
             setTitle(isGetInfo ? "Info Student" : "Update Student");
+            if(isGetInfo){
+                butttonPane.setVisible(false);
+            }
         }
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -156,7 +156,7 @@ public class AlumnoGUI extends JFrame {
                 int selectedStudent = studentsTable.getSelectedRow();
                 if (selectedStudent < 0) {
                     //JOPTION PANE
-                    System.out.println("No se selecciono nada");
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this, "Are you sure to delete?",
@@ -179,7 +179,6 @@ public class AlumnoGUI extends JFrame {
                 StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, null, false);
                 studentDialog.setVisible(true);
                 StudentDTO studentDTO = studentDialog.getStudentDTO();
-                System.out.println(studentDTO.getName());
                 try {
                     //si hay excpetion el dialogo que se mantenga abierto
                     Student student = dtoToStudent(studentDTO);
@@ -194,8 +193,7 @@ public class AlumnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedStudent = studentsTable.getSelectedRow();
                 if (selectedStudent < 0) {
-                    //JOPTION PANE
-                    System.out.println("No se selecciono nada");
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -218,8 +216,7 @@ public class AlumnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedStudent = studentsTable.getSelectedRow();
                 if (selectedStudent < 0) {
-                    //JOPTION PANE
-                    System.out.println("No se selecciono nada");
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
