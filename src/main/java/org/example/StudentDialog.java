@@ -20,6 +20,15 @@ public class StudentDialog extends JDialog {
     private JTextField genderTextField;
     private JPanel butttonPane;
 
+    public boolean isButtonOkPressed() {
+        return isButtonOkPressed;
+    }
+
+    public void setButtonOkPressed(boolean buttonOkPressed) {
+        isButtonOkPressed = buttonOkPressed;
+    }
+
+    private boolean isButtonOkPressed = false;
     public StudentDTO getStudentDTO() {
         return studentDTOs;
     }
@@ -82,7 +91,6 @@ public class StudentDialog extends JDialog {
         buttonOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 studentDTOs.setDni(Integer.valueOf(dniTextField.getText()));
                 studentDTOs.setName(nameTextField.getText());
                 studentDTOs.setSurname(surnameTextField.getText());
@@ -91,6 +99,7 @@ public class StudentDialog extends JDialog {
                 studentDTOs.setApprovedSubjectQuantity(Integer.valueOf(approvedSubjectsTextField.getText()));
                 studentDTOs.setAverage(Double.valueOf(averageTextField.getText()));
                 studentDTOs.setGender(genderTextField.getText().charAt(0));
+                isButtonOkPressed = true;
                 setVisible(false);
             }
         });

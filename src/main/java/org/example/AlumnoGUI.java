@@ -64,38 +64,50 @@ public class AlumnoGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onlyActive = !onlyActive;
+                if(daoTxt!=null){
+                    try {
+                        students = dao.findAll(onlyActive);
+                    } catch (DaoException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    studentModel.setStudents(students);
+                    studentModel.fireTableDataChanged();
+                    studentsTable.setModel(studentModel);
+                }
             }
         });
         daoKindComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (daoKindComboBox.getSelectedIndex() == 0) {
+                    onlyActiveCheckBox.setVisible(true);
                     textPanel.setVisible(true);
                     sqlPanel.setVisible(false);
                     if (daoTxt != null) {
                         System.out.println("Mirko");
                         dao = daoTxt;
                         studentsTable.setModel(studentModel);
-                    }else {
+                    } else {
                         studentsTable.setModel(new DefaultTableModel());
                     }
 
                 } else {
+                    onlyActiveCheckBox.setVisible(false);
                     textPanel.setVisible(false);
                     sqlPanel.setVisible(true);
                     if (daoSql != null) {
                         System.out.println("take the aready instanced sql");
                         dao = daoSql;
                         studentsTable.setModel(studentModel);
-                    }else{
+                    } else {
                         studentsTable.setModel(new DefaultTableModel());
                     }
                 }
                 try {
                     if (dao != null)
                         students = dao.findAll(onlyActive);
-                        studentModel.setStudents(students);
-                        studentModel.fireTableDataChanged();
+                    studentModel.setStudents(students);
+                    studentModel.fireTableDataChanged();
                 } catch (DaoException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -159,6 +171,10 @@ public class AlumnoGUI extends JFrame {
                     JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                if(students.get(selectedStudent).isActive() == false){
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Student already deleted", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this, "Are you sure to delete?",
                         "Delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (resp != JOptionPane.OK_OPTION) {
@@ -167,7 +183,10 @@ public class AlumnoGUI extends JFrame {
                 try {
                     Student student = students.get(selectedStudent);
                     dao.delete(student.getDni());
-                    System.out.println(student.getDni());
+                    students = dao.findAll(onlyActive);
+                    studentModel.setStudents(students);
+                    studentModel.fireTableDataChanged();
+                    studentsTable.setModel(studentModel);
                 } catch (DaoException ex) {
                     JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -179,13 +198,24 @@ public class AlumnoGUI extends JFrame {
                 StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, null, false);
                 studentDialog.setVisible(true);
                 StudentDTO studentDTO = studentDialog.getStudentDTO();
-                try {
-                    //si hay excpetion el dialogo que se mantenga abierto
-                    Student student = dtoToStudent(studentDTO);
-                    dao.create(student);
-                } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                //if (studentDialog.isButtonOkPressed() == true) {
+                    try {
+                        //si hay excpetion el dialogo que se mantenga abierto
+                        //studentDialog.setButtonOkPressed(false);
+                        Student student = dtoToStudent(studentDTO);
+                        dao.create(student);
+                        students = dao.findAll(onlyActive);
+                        studentModel.setStudents(students);
+                        studentModel.fireTableDataChanged();
+                        studentsTable.setModel(studentModel);
+                    } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
+                            JOptionPane.showMessageDialog(AlumnoGUI.this,
+                                    ex.getLocalizedMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            studentDialog.setVisible(true);
+                    }
+              // }
             }
         });
         updateButton.addActionListener(new ActionListener() {
@@ -206,6 +236,10 @@ public class AlumnoGUI extends JFrame {
                     //si hay excpetion el dialogo que se mantenga abierto
                     Student student = dtoToStudent(studentDTO);
                     dao.update(student);
+                    students = dao.findAll(onlyActive);
+                    studentModel.setStudents(students);
+                    studentModel.fireTableDataChanged();
+                    studentsTable.setModel(studentModel);
                 } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
                     JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -272,6 +306,7 @@ public class AlumnoGUI extends JFrame {
             studentModel.setStudents(students);
             studentModel.fireTableDataChanged();
             studentsTable.setModel(studentModel);
+            deleteButton.setEnabled(true);
         } catch (DaoFactoryException | DaoException ex) {
             JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
