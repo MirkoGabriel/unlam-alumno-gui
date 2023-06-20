@@ -4,8 +4,7 @@ import person.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -172,8 +171,13 @@ public class AlumnoGUI extends JFrame {
                     return;
                 }
                 if(students.get(selectedStudent).isActive() == false){
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Student already deleted", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
+                    students.get(selectedStudent).setActive(true);
+                    try {
+                        dao.update(students.get(selectedStudent));
+                        return;
+                    } catch (DaoException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
                 int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this, "Are you sure to delete?",
                         "Delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -257,6 +261,19 @@ public class AlumnoGUI extends JFrame {
                 StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
                 StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO, true);
                 studentDialog.setVisible(true);
+            }
+        });
+
+        studentsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                int selectedStudent = studentsTable.getSelectedRow();
+                if(students.get(selectedStudent).isActive() == false){
+                    deleteButton.setLabel("Able");
+                }else {
+                    deleteButton.setLabel("Delete");
+                }
             }
         });
     }
