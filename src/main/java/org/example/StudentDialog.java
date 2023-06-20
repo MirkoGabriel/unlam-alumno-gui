@@ -1,10 +1,12 @@
 package org.example;
 
 import com.toedter.calendar.JDateChooser;
-import person.MyCalendar;
+import person.*;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentDialog extends JDialog {
     private JPanel contentPane;
@@ -19,23 +21,15 @@ public class StudentDialog extends JDialog {
     private JTextField averageTextField;
     private JTextField genderTextField;
     private JPanel butttonPane;
-
-    public boolean isButtonOkPressed() {
-        return isButtonOkPressed;
-    }
-
-    public void setButtonOkPressed(boolean buttonOkPressed) {
-        isButtonOkPressed = buttonOkPressed;
-    }
-
-    private boolean isButtonOkPressed = false;
+    private List<Student> students = new ArrayList<>();
     public StudentDTO getStudentDTO() {
         return studentDTOs;
     }
 
     private StudentDTO studentDTOs;
 
-    public StudentDialog(java.awt.Frame parent, boolean modal, StudentDTO studentDTO, boolean isGetInfo) {
+    public StudentDialog(java.awt.Frame parent, boolean modal, StudentDTO studentDTO, boolean isGetInfo, Dao<Student,
+            Integer> dao, boolean onlyActive, JTable studentsTable, StudentModel studentModel) {
         super(parent, modal);
         setContentPane(contentPane);
         setModal(true);
@@ -57,6 +51,7 @@ public class StudentDialog extends JDialog {
             genderTextField.setText(String.valueOf(studentDTO.getGender()));
             approvedSubjectsTextField.setText(String.valueOf(studentDTO.getApprovedSubjectQuantity()));
             averageTextField.setText(String.valueOf(studentDTO.getAverage()));
+            dniTextField.setEnabled(false);
             setTitle(isGetInfo ? "Info Student" : "Update Student");
             if(isGetInfo){
                 butttonPane.setVisible(false);
@@ -91,22 +86,41 @@ public class StudentDialog extends JDialog {
         buttonOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                studentDTOs.setDni(Integer.valueOf(dniTextField.getText()));
-                studentDTOs.setName(nameTextField.getText());
-                studentDTOs.setSurname(surnameTextField.getText());
-                studentDTOs.setBirthday(new MyCalendar(birthday.getCalendar()));
-                studentDTOs.setAdmissionDate(new MyCalendar(admissionDate.getCalendar()));
-                studentDTOs.setApprovedSubjectQuantity(Integer.valueOf(approvedSubjectsTextField.getText()));
-                studentDTOs.setAverage(Double.valueOf(averageTextField.getText()));
-                studentDTOs.setGender(genderTextField.getText().charAt(0));
-                isButtonOkPressed = true;
-                setVisible(false);
+                try {
+                    Student student = new Student();
+                    student.setDni(Integer.valueOf(dniTextField.getText()));
+                    student.setName(nameTextField.getText());
+                    student.setSurname(surnameTextField.getText());
+                    student.setBirthday(new MyCalendar(birthday.getCalendar()));
+                    student.setAdmissionDate(new MyCalendar(admissionDate.getCalendar()));
+                    student.setApprovedSubjectQuantity(Integer.valueOf(approvedSubjectsTextField.getText()));
+                    student.setAverage(Double.valueOf(averageTextField.getText()));
+                    student.setGender(genderTextField.getText().charAt(0));
+
+                    if (studentDTO == null) {
+                        dao.create(student);
+                    } else {
+                        dao.update(student);
+                    }
+                    students = dao.findAll(onlyActive);
+                    studentModel.setStudents(students);
+                    studentModel.fireTableDataChanged();
+                    studentsTable.setModel(studentModel);
+                    setVisible(false);
+                } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
+                    JOptionPane.showMessageDialog(StudentDialog.this,
+                            ex.getLocalizedMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+
+                    setVisible(true);
+                }
             }
         });
         buttonCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+                //setVisible(false);
             }
         });
     }
@@ -123,7 +137,8 @@ public class StudentDialog extends JDialog {
     }
 
     public static void main(String[] args) {
-        StudentDialog dialog = new StudentDialog(new javax.swing.JFrame(), true, null, false);
+        StudentDialog dialog = new StudentDialog(new javax.swing.JFrame(), true, null, false,
+                null, false, null, null);
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);

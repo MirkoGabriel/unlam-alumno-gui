@@ -47,7 +47,7 @@ public class AlumnoGUI extends JFrame {
         setLocationRelativeTo(null);
         textPanel.setVisible(true);
         sqlPanel.setVisible(false);
-        deleteButton.setEnabled(false);
+        disableButtons();
         disconnectButton.setEnabled(false);
         studentModel = new StudentModel();
         studentsTable.setModel(studentModel);
@@ -63,15 +63,12 @@ public class AlumnoGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onlyActive = !onlyActive;
-                if(daoTxt!=null){
+                if (daoTxt != null) {
                     try {
-                        students = dao.findAll(onlyActive);
+                        refreshTable();
                     } catch (DaoException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    studentModel.setStudents(students);
-                    studentModel.fireTableDataChanged();
-                    studentsTable.setModel(studentModel);
                 }
             }
         });
@@ -83,7 +80,6 @@ public class AlumnoGUI extends JFrame {
                     textPanel.setVisible(true);
                     sqlPanel.setVisible(false);
                     if (daoTxt != null) {
-                        System.out.println("Mirko");
                         dao = daoTxt;
                         studentsTable.setModel(studentModel);
                     } else {
@@ -95,7 +91,6 @@ public class AlumnoGUI extends JFrame {
                     textPanel.setVisible(false);
                     sqlPanel.setVisible(true);
                     if (daoSql != null) {
-                        System.out.println("take the aready instanced sql");
                         dao = daoSql;
                         studentsTable.setModel(studentModel);
                     } else {
@@ -103,12 +98,12 @@ public class AlumnoGUI extends JFrame {
                     }
                 }
                 try {
-                    if (dao != null)
+                    if (dao != null && daoSql != null && daoTxt != null)
                         students = dao.findAll(onlyActive);
                     studentModel.setStudents(students);
                     studentModel.fireTableDataChanged();
                 } catch (DaoException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -128,16 +123,11 @@ public class AlumnoGUI extends JFrame {
                         dao = daoSql;
                         connectButton.setEnabled(false);
                         disconnectButton.setEnabled(true);
-                        students = dao.findAll(onlyActive);
-                        studentModel.setStudents(students);
-                        studentModel.fireTableDataChanged();
-                        studentsTable.setModel(studentModel);
-                        deleteButton.setEnabled(true);
+                        refreshTable();
+                        ableButtons();
                     } catch (DaoFactoryException | DaoException ex) {
                         JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                } else {
-                    System.out.println("idk");
                 }
             }
         });
@@ -146,7 +136,7 @@ public class AlumnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (daoSql != null) {
                     try {
-                        System.out.println("disconnect");
+                        disableButtons();
                         daoSql.close();
                         daoSql = null;
                         connectButton.setEnabled(true);
@@ -166,17 +156,16 @@ public class AlumnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedStudent = studentsTable.getSelectedRow();
                 if (selectedStudent < 0) {
-                    //JOPTION PANE
                     JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if(students.get(selectedStudent).isActive() == false){
+                if (students.get(selectedStudent).isActive() == false) {
                     students.get(selectedStudent).setActive(true);
                     try {
                         dao.update(students.get(selectedStudent));
                         return;
                     } catch (DaoException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this, "Are you sure to delete?",
@@ -187,10 +176,7 @@ public class AlumnoGUI extends JFrame {
                 try {
                     Student student = students.get(selectedStudent);
                     dao.delete(student.getDni());
-                    students = dao.findAll(onlyActive);
-                    studentModel.setStudents(students);
-                    studentModel.fireTableDataChanged();
-                    studentsTable.setModel(studentModel);
+                    refreshTable();
                 } catch (DaoException ex) {
                     JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -199,27 +185,9 @@ public class AlumnoGUI extends JFrame {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, null, false);
+                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, null,
+                        false, dao, onlyActive, studentsTable, studentModel);
                 studentDialog.setVisible(true);
-                StudentDTO studentDTO = studentDialog.getStudentDTO();
-                //if (studentDialog.isButtonOkPressed() == true) {
-                    try {
-                        //si hay excpetion el dialogo que se mantenga abierto
-                        //studentDialog.setButtonOkPressed(false);
-                        Student student = dtoToStudent(studentDTO);
-                        dao.create(student);
-                        students = dao.findAll(onlyActive);
-                        studentModel.setStudents(students);
-                        studentModel.fireTableDataChanged();
-                        studentsTable.setModel(studentModel);
-                    } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
-                            JOptionPane.showMessageDialog(AlumnoGUI.this,
-                                    ex.getLocalizedMessage(),
-                                    "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            studentDialog.setVisible(true);
-                    }
-              // }
             }
         });
         updateButton.addActionListener(new ActionListener() {
@@ -232,21 +200,10 @@ public class AlumnoGUI extends JFrame {
                 }
 
                 StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
-                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO, false);
+                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO,
+                        false, dao, onlyActive, studentsTable, studentModel);
                 studentDialog.setVisible(true);
-                studentDTO = studentDialog.getStudentDTO();
-                System.out.println(studentDTO);
-                try {
-                    //si hay excpetion el dialogo que se mantenga abierto
-                    Student student = dtoToStudent(studentDTO);
-                    dao.update(student);
-                    students = dao.findAll(onlyActive);
-                    studentModel.setStudents(students);
-                    studentModel.fireTableDataChanged();
-                    studentsTable.setModel(studentModel);
-                } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
+
             }
         });
         getButton.addActionListener(new ActionListener() {
@@ -259,7 +216,8 @@ public class AlumnoGUI extends JFrame {
                 }
 
                 StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
-                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO, true);
+                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO,
+                        true, dao, onlyActive, studentsTable, studentModel);
                 studentDialog.setVisible(true);
             }
         });
@@ -269,9 +227,9 @@ public class AlumnoGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
 
                 int selectedStudent = studentsTable.getSelectedRow();
-                if(students.get(selectedStudent).isActive() == false){
+                if (students.get(selectedStudent).isActive() == false) {
                     deleteButton.setLabel("Able");
-                }else {
+                } else {
                     deleteButton.setLabel("Delete");
                 }
             }
@@ -291,17 +249,11 @@ public class AlumnoGUI extends JFrame {
         return studentDTO;
     }
 
-    private Student dtoToStudent(StudentDTO studentDTO) throws PersonNameException, PersonDniException, StudentException {
-        Student student = new Student();
-        student.setDni(studentDTO.getDni());
-        student.setName(studentDTO.getName());
-        student.setSurname(studentDTO.getSurname());
-        student.setBirthday(studentDTO.getBirthday());
-        student.setAdmissionDate(studentDTO.getAdmissionDate());
-        student.setGender(studentDTO.getGender());
-        student.setApprovedSubjectQuantity(studentDTO.getApprovedSubjectQuantity());
-        student.setAverage(studentDTO.getAverage());
-        return student;
+    public void refreshTable() throws DaoException {
+        students = dao.findAll(onlyActive);
+        studentModel.setStudents(students);
+        studentModel.fireTableDataChanged();
+        studentsTable.setModel(studentModel);
     }
 
     public void readFile() {
@@ -319,14 +271,25 @@ public class AlumnoGUI extends JFrame {
             config.put(DaoFactory.DAO_PATH_TXT, fileSelectedTextField.getText());
             daoTxt = (StudentDaoTxt) DaoFactory.getInstance().crearDao(config);
             dao = daoTxt;
-            students = dao.findAll(onlyActive);
-            studentModel.setStudents(students);
-            studentModel.fireTableDataChanged();
-            studentsTable.setModel(studentModel);
-            deleteButton.setEnabled(true);
+            refreshTable();
+            ableButtons();
         } catch (DaoFactoryException | DaoException ex) {
             JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public void ableButtons() {
+        createButton.setEnabled(true);
+        updateButton.setEnabled(true);
+        getButton.setEnabled(true);
+        deleteButton.setEnabled(true);
+    }
+
+    public void disableButtons() {
+        createButton.setEnabled(false);
+        updateButton.setEnabled(false);
+        getButton.setEnabled(false);
+        deleteButton.setEnabled(false);
     }
 
     public static void main(String[] args) {
