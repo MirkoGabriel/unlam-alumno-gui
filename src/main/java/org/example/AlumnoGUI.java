@@ -53,6 +53,11 @@ public class AlumnoGUI extends JFrame {
         studentsTable.setModel(studentModel);
         studentModel.setStudents(students);
 
+        mainPanel.registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         fileBrowserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -234,13 +239,14 @@ public class AlumnoGUI extends JFrame {
                 } else {
                     deleteButton.setLabel("Delete");
                 }
-                if(e.getClickCount() == 2){
+                if (e.getClickCount() == 2) {
                     getInfoStudent(selectedStudent);
                 }
             }
         });
     }
-    public void getInfoStudent(int selectedStudent){
+
+    public void getInfoStudent(int selectedStudent) {
         if (selectedStudent < 0) {
             JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -251,6 +257,7 @@ public class AlumnoGUI extends JFrame {
                 true, dao, onlyActive, studentsTable, studentModel);
         studentDialog.setVisible(true);
     }
+
     private StudentDTO aluToDTO(Student student) {
         StudentDTO studentDTO = new StudentDTO();
         studentDTO.setName(student.getName());
@@ -305,6 +312,11 @@ public class AlumnoGUI extends JFrame {
         updateButton.setEnabled(false);
         getButton.setEnabled(false);
         deleteButton.setEnabled(false);
+    }
+
+    private void onCancel() {
+        // add your code here if necessary
+        dispose();
     }
 
     public static void main(String[] args) {
