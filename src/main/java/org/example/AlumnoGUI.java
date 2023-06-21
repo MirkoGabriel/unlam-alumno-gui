@@ -41,7 +41,7 @@ public class AlumnoGUI extends JFrame {
     public AlumnoGUI() {
         setContentPane(mainPanel);
         setTitle("Alumno GUI");
-        setSize(1040, 320);
+        setSize(1280, 320);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
         setLocationRelativeTo(null);
@@ -168,7 +168,8 @@ public class AlumnoGUI extends JFrame {
                         JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-                int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this, "Are you sure to delete?",
+                int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this,
+                        "Are you sure to delete student " + students.get(selectedStudent).getName() + "?",
                         "Delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (resp != JOptionPane.OK_OPTION) {
                     return;
@@ -188,6 +189,11 @@ public class AlumnoGUI extends JFrame {
                 StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, null,
                         false, dao, onlyActive, studentsTable, studentModel);
                 studentDialog.setVisible(true);
+                try {
+                    refreshTable();
+                } catch (DaoException ex) {
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         updateButton.addActionListener(new ActionListener() {
@@ -203,22 +209,18 @@ public class AlumnoGUI extends JFrame {
                 StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO,
                         false, dao, onlyActive, studentsTable, studentModel);
                 studentDialog.setVisible(true);
-
+                try {
+                    refreshTable();
+                } catch (DaoException ex) {
+                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         getButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedStudent = studentsTable.getSelectedRow();
-                if (selectedStudent < 0) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
-                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO,
-                        true, dao, onlyActive, studentsTable, studentModel);
-                studentDialog.setVisible(true);
+                getInfoStudent(selectedStudent);
             }
         });
 
@@ -232,10 +234,23 @@ public class AlumnoGUI extends JFrame {
                 } else {
                     deleteButton.setLabel("Delete");
                 }
+                if(e.getClickCount() == 2){
+                    getInfoStudent(selectedStudent);
+                }
             }
         });
     }
+    public void getInfoStudent(int selectedStudent){
+        if (selectedStudent < 0) {
+            JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
+        StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
+        StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO,
+                true, dao, onlyActive, studentsTable, studentModel);
+        studentDialog.setVisible(true);
+    }
     private StudentDTO aluToDTO(Student student) {
         StudentDTO studentDTO = new StudentDTO();
         studentDTO.setName(student.getName());

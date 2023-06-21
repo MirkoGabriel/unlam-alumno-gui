@@ -57,17 +57,7 @@ public class StudentDialog extends JDialog {
                 butttonPane.setVisible(false);
             }
         }
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -102,34 +92,25 @@ public class StudentDialog extends JDialog {
                     } else {
                         dao.update(student);
                     }
-                    students = dao.findAll(onlyActive);
-                    studentModel.setStudents(students);
-                    studentModel.fireTableDataChanged();
-                    studentsTable.setModel(studentModel);
                     setVisible(false);
                 } catch (DaoException | PersonNameException | PersonDniException | StudentException ex) {
                     JOptionPane.showMessageDialog(StudentDialog.this,
                             ex.getLocalizedMessage(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
-
-                    setVisible(true);
                 }
             }
         });
         buttonCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //setVisible(false);
+                setVisible(false);
             }
         });
     }
 
 
-    private void onOK() {
-        // add your code here
-        dispose();
-    }
+
 
     private void onCancel() {
         // add your code here if necessary
