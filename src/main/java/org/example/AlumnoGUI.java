@@ -41,7 +41,7 @@ public class AlumnoGUI extends JFrame {
     public AlumnoGUI() {
         setContentPane(mainPanel);
         setTitle("Alumno GUI");
-        setSize(1280, 320);
+        setSize(800, 320);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
         setLocationRelativeTo(null);
