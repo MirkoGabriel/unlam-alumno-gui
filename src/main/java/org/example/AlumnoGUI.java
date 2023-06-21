@@ -40,7 +40,7 @@ public class AlumnoGUI extends JFrame {
     //Solo abra txt
     public AlumnoGUI() {
         setContentPane(mainPanel);
-        setTitle("Alumno GUI");
+        setTitle("Student GUI");
         setSize(800, 320);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
@@ -88,7 +88,7 @@ public class AlumnoGUI extends JFrame {
                         dao = daoTxt;
                         studentsTable.setModel(studentModel);
                     } else {
-                        studentsTable.setModel(new DefaultTableModel());
+                        studentsTable.setModel(new StudentModel());
                     }
 
                 } else {
@@ -99,7 +99,7 @@ public class AlumnoGUI extends JFrame {
                         dao = daoSql;
                         studentsTable.setModel(studentModel);
                     } else {
-                        studentsTable.setModel(new DefaultTableModel());
+                        studentsTable.setModel(new StudentModel());
                     }
                 }
                 try {
@@ -146,7 +146,7 @@ public class AlumnoGUI extends JFrame {
                         daoSql = null;
                         connectButton.setEnabled(true);
                         disconnectButton.setEnabled(false);
-                        studentsTable.setModel(new DefaultTableModel());
+                        studentsTable.setModel(new StudentModel());
                         passTextField.setText("");
                         pathTextField.setText("");
                         userTextField.setText("");
@@ -175,7 +175,7 @@ public class AlumnoGUI extends JFrame {
                 }
                 int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this,
                         "Are you sure to delete student " + students.get(selectedStudent).getName() + "?",
-                        "Delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        "Delete Student", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (resp != JOptionPane.OK_OPTION) {
                     return;
                 }

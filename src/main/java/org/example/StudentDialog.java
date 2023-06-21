@@ -32,11 +32,10 @@ public class StudentDialog extends JDialog {
             Integer> dao, boolean onlyActive, JTable studentsTable, StudentModel studentModel) {
         super(parent, modal);
         setContentPane(contentPane);
+        setSize(360, 280);
+        setLocationRelativeTo(null);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setLocationRelativeTo(null);
-
-        setSize(360, 280);
 
         if (studentDTO == null) {
             this.studentDTOs = new StudentDTO();
