@@ -3,7 +3,6 @@ package org.example;
 import person.*;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AlumnoGUI extends JFrame {
+public class StudentGUI extends JFrame {
     private StudentModel studentModel;
     private Dao<Student, Integer> dao;
     private StudentDaoTxt daoTxt;
@@ -38,7 +37,7 @@ public class AlumnoGUI extends JFrame {
     private List<Student> students = new ArrayList<>();
 
     //Solo abra txt
-    public AlumnoGUI() {
+    public StudentGUI() {
         setContentPane(mainPanel);
         setTitle("Student GUI");
         setSize(800, 320);
@@ -72,7 +71,7 @@ public class AlumnoGUI extends JFrame {
                     try {
                         refreshTable();
                     } catch (DaoException ex) {
-                        JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -108,7 +107,7 @@ public class AlumnoGUI extends JFrame {
                     studentModel.setStudents(students);
                     studentModel.fireTableDataChanged();
                 } catch (DaoException ex) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -131,7 +130,7 @@ public class AlumnoGUI extends JFrame {
                         refreshTable();
                         ableButtons();
                     } catch (DaoFactoryException | DaoException ex) {
-                        JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -151,7 +150,7 @@ public class AlumnoGUI extends JFrame {
                         pathTextField.setText("");
                         userTextField.setText("");
                     } catch (DaoException ex) {
-                        JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -161,7 +160,7 @@ public class AlumnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedStudent = studentsTable.getSelectedRow();
                 if (selectedStudent < 0) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(StudentGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if (students.get(selectedStudent).isActive() == false) {
@@ -170,10 +169,10 @@ public class AlumnoGUI extends JFrame {
                         dao.update(students.get(selectedStudent));
                         return;
                     } catch (DaoException ex) {
-                        JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-                int resp = JOptionPane.showConfirmDialog(AlumnoGUI.this,
+                int resp = JOptionPane.showConfirmDialog(StudentGUI.this,
                         "Are you sure to delete student " + students.get(selectedStudent).getName() + "?",
                         "Delete Student", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (resp != JOptionPane.OK_OPTION) {
@@ -184,20 +183,20 @@ public class AlumnoGUI extends JFrame {
                     dao.delete(student.getDni());
                     refreshTable();
                 } catch (DaoException ex) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, null,
+                StudentDialog studentDialog = new StudentDialog(StudentGUI.this, true, null,
                         false, dao, onlyActive, studentsTable, studentModel);
                 studentDialog.setVisible(true);
                 try {
                     refreshTable();
                 } catch (DaoException ex) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -206,18 +205,18 @@ public class AlumnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedStudent = studentsTable.getSelectedRow();
                 if (selectedStudent < 0) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(StudentGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
-                StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO,
+                StudentDialog studentDialog = new StudentDialog(StudentGUI.this, true, studentDTO,
                         false, dao, onlyActive, studentsTable, studentModel);
                 studentDialog.setVisible(true);
                 try {
                     refreshTable();
                 } catch (DaoException ex) {
-                    JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -248,12 +247,12 @@ public class AlumnoGUI extends JFrame {
 
     public void getInfoStudent(int selectedStudent) {
         if (selectedStudent < 0) {
-            JOptionPane.showMessageDialog(AlumnoGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(StudentGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         StudentDTO studentDTO = aluToDTO(students.get(selectedStudent));
-        StudentDialog studentDialog = new StudentDialog(AlumnoGUI.this, true, studentDTO,
+        StudentDialog studentDialog = new StudentDialog(StudentGUI.this, true, studentDTO,
                 true, dao, onlyActive, studentsTable, studentModel);
         studentDialog.setVisible(true);
     }
@@ -280,7 +279,7 @@ public class AlumnoGUI extends JFrame {
 
     public void readFile() {
         JFileChooser chooser = new JFileChooser();
-        int res = chooser.showOpenDialog(AlumnoGUI.this);
+        int res = chooser.showOpenDialog(StudentGUI.this);
 
         if (res != JFileChooser.APPROVE_OPTION) {
             return;
@@ -296,7 +295,7 @@ public class AlumnoGUI extends JFrame {
             refreshTable();
             ableButtons();
         } catch (DaoFactoryException | DaoException ex) {
-            JOptionPane.showMessageDialog(AlumnoGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -320,6 +319,6 @@ public class AlumnoGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        new AlumnoGUI();
+        new StudentGUI();
     }
 }
