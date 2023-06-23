@@ -8,6 +8,6 @@
 
 #### SQL source 
 - First you need to create a local database or if you can a remote database its better.
-- When select the sql repository put the database path and the credentials.
+- When select the sql repository put the database path (jdbc:mysql://127.0.0.1:3306/universidad_caba) and the credentials.
 - Instance a new connection.
 - Use the operations.
