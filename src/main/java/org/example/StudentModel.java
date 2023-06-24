@@ -16,7 +16,8 @@ public class StudentModel extends AbstractTableModel {
     private static final int GENDER = 5;
     private static final int APPROVED_SUBJECTS_QUANTITY = 6;
     private static final int AVERAGE = 7;
-    private static final String[] HEADERS = {"Dni", "Name", "Surname", "Birthday", "Admission Date", "Gender", "ApprovedSubjectsQuantity", "Average"};
+    private static final int STATUS = 8;
+    private static final String[] HEADERS = {"Dni", "Name", "Surname", "Birthday", "Admission Date", "Gender", "ApprovedSubjectsQuantity", "Average", "Status"};
     private List<Student> students;
 
     public List<Student> getStudents() {
@@ -66,6 +67,8 @@ public class StudentModel extends AbstractTableModel {
                 return student.getApprovedSubjectQuantity();
             case AVERAGE:
                 return student.getAverage();
+            case STATUS:
+                return student.isActive();
             default:
                 return null;
         }

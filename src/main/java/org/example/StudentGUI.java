@@ -67,8 +67,9 @@ public class StudentGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onlyActive = !onlyActive;
-                if (daoTxt != null) {
+                if (daoTxt != null || daoSql !=null) {
                     try {
+                        System.out.println("refresh");
                         refreshTable();
                     } catch (DaoException ex) {
                         JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -91,7 +92,6 @@ public class StudentGUI extends JFrame {
                     }
 
                 } else {
-                    onlyActiveCheckBox.setVisible(false);
                     textPanel.setVisible(false);
                     sqlPanel.setVisible(true);
                     if (daoSql != null) {
@@ -163,15 +163,6 @@ public class StudentGUI extends JFrame {
                     JOptionPane.showMessageDialog(StudentGUI.this, "Select a row", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (students.get(selectedStudent).isActive() == false) {
-                    students.get(selectedStudent).setActive(true);
-                    try {
-                        dao.update(students.get(selectedStudent));
-                        return;
-                    } catch (DaoException ex) {
-                        JOptionPane.showMessageDialog(StudentGUI.this, ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
                 int resp = JOptionPane.showConfirmDialog(StudentGUI.this,
                         "Are you sure to delete student " + students.get(selectedStudent).getName() + "?",
                         "Delete Student", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -233,11 +224,6 @@ public class StudentGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
 
                 int selectedStudent = studentsTable.getSelectedRow();
-                if (students.get(selectedStudent).isActive() == false) {
-                    deleteButton.setLabel("Able");
-                } else {
-                    deleteButton.setLabel("Delete");
-                }
                 if (e.getClickCount() == 2) {
                     getInfoStudent(selectedStudent);
                 }
@@ -267,6 +253,7 @@ public class StudentGUI extends JFrame {
         studentDTO.setGender(student.getGender());
         studentDTO.setApprovedSubjectQuantity(student.getApprovedSubjectQuantity());
         studentDTO.setAverage(student.getAverage());
+        studentDTO.setActive(student.isActive());
         return studentDTO;
     }
 

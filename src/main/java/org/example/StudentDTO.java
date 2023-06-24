@@ -12,6 +12,16 @@ public class StudentDTO {
     private int approvedSubjectQuantity;
     private double average;
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    private boolean active;
+
     public char getGender() {
         return gender;
     }

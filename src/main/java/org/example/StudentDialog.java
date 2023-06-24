@@ -21,6 +21,10 @@ public class StudentDialog extends JDialog {
     private JTextField averageTextField;
     private JTextField genderTextField;
     private JPanel butttonPane;
+    private JTextField statusTextField;
+    private JLabel statusLabel;
+    private JComboBox genderComboBox;
+    private JComboBox statusComboBox;
     private List<Student> students = new ArrayList<>();
     public StudentDTO getStudentDTO() {
         return studentDTOs;
@@ -32,7 +36,7 @@ public class StudentDialog extends JDialog {
             Integer> dao, boolean onlyActive, JTable studentsTable, StudentModel studentModel) {
         super(parent, modal);
         setContentPane(contentPane);
-        setSize(360, 280);
+        setSize(360, 310);
         setLocationRelativeTo(null);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -40,6 +44,8 @@ public class StudentDialog extends JDialog {
         if (studentDTO == null) {
             this.studentDTOs = new StudentDTO();
             setTitle("Create Student");
+            statusLabel.setVisible(false);
+            statusComboBox.setVisible(false);
         } else {
             this.studentDTOs = studentDTO;
             dniTextField.setText(String.valueOf(studentDTO.getDni()));
@@ -47,9 +53,18 @@ public class StudentDialog extends JDialog {
             surnameTextField.setText(studentDTO.getSurname());
             birthday.setCalendar(studentDTO.getBirthday());
             admissionDate.setCalendar(studentDTO.getAdmissionDate());
-            genderTextField.setText(String.valueOf(studentDTO.getGender()));
+            if(studentDTO.getGender() == 'M'){
+                genderComboBox.setSelectedIndex(0);
+            }else{
+                genderComboBox.setSelectedIndex(1);
+            }
             approvedSubjectsTextField.setText(String.valueOf(studentDTO.getApprovedSubjectQuantity()));
             averageTextField.setText(String.valueOf(studentDTO.getAverage()));
+            if(studentDTO.isActive()){
+                statusComboBox.setSelectedIndex(0);
+            }else {
+                statusComboBox.setSelectedIndex(1);
+            }
             dniTextField.setEnabled(false);
             setTitle(isGetInfo ? "Info Student" : "Update Student");
             if(isGetInfo){
@@ -84,11 +99,13 @@ public class StudentDialog extends JDialog {
                     student.setAdmissionDate(new MyCalendar(admissionDate.getCalendar()));
                     student.setApprovedSubjectQuantity(Integer.valueOf(approvedSubjectsTextField.getText()));
                     student.setAverage(Double.valueOf(averageTextField.getText()));
-                    student.setGender(genderTextField.getText().charAt(0));
+                    student.setGender(genderComboBox.getSelectedItem().toString().charAt(0));
 
                     if (studentDTO == null) {
+                        student.setActive(true);
                         dao.create(student);
                     } else {
+                        student.setActive(Boolean.valueOf(statusComboBox.getSelectedItem().toString()));
                         dao.update(student);
                     }
                     setVisible(false);
